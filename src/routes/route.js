@@ -1,8 +1,5 @@
 import React from 'react';
-import Cookies from 'react-cookies';
-import { Route, Redirect } from 'react-router-dom';
-
-import Login from '../pages/Login/index';
+import { Route } from 'react-router-dom';
 
 const AppRoute = ({
   component: Component,
@@ -29,13 +26,13 @@ const AppRoute = ({
         return (
           <Component {...props} socket={rest.socket} client={rest.client} />
         );
-      } else {
-        return (
-          <Layout>
-            <Component {...props} socket={rest.socket} client={rest.client} />
-          </Layout>
-        );
       }
+
+      return (
+        <Layout>
+          <Component {...props} socket={rest.socket} client={rest.client} />
+        </Layout>
+      );
     }}
   />
 );

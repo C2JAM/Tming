@@ -1,7 +1,7 @@
-import { combineReducers } from "redux";
+import { combineReducers } from 'redux';
 
 // Front
-import Layout from "./layout/reducer";
+import Layout from './layout/reducer';
 
 const rootReducer = combineReducers({
   // public
