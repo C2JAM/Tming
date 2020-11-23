@@ -1,6 +1,6 @@
 {
-  "short_name": "Tming App",
-  "name": "Tming desktop App",
+  "short_name": "Tming",
+  "name": "Tming Web",
   "icons": [
     {
       "src": "favicon.ico",

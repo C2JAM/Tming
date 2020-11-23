@@ -56,7 +56,7 @@ class LoginButton extends Component {
         return (
             <React.Fragment>
                 <Wrapper>
-                    <Button onClick={this.handleClick} href="http://127.0.0.1:5000/api/auth/login">
+                    <Button onClick={this.handleClick} href="/home">
                         {this.state.loading ? (
                             <div className="loaderWrapper">
                                 <Loader type="TailSpin" color="#fff" height={25} width={25} />

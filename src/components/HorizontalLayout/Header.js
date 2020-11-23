@@ -65,7 +65,7 @@ class Header extends Component {
             isWordCloudToggle: false,
             isManualToggle: false,
             lang: window.localStorage.getItem("lang"),
-            logoutAlert:false
+            logoutAlert: false,
         };
         this.toggleFullscreen = this.toggleFullscreen.bind(this);
     }
@@ -214,39 +214,6 @@ class Header extends Component {
                         </div>
 
                         <div className="d-flex">
-                            <div className="dropdown d-lg-inline-block ml-1">
-                                <button
-                                    type="button"
-                                    className="btn header-item noti-icon waves-effect"
-                                    onClick={this.refreshPage}
-                                >
-                                    <Icon className="fas fa-sync"></Icon>
-                                </button>
-                                <button
-                                    type="button"
-                                    className="btn header-item noti-icon waves-effect"
-                                    onClick={this.logout}
-                                >
-                                    <Icon className="fas fa-sign-out-alt"></Icon>
-                                </button>
-                                {this.state.logoutAlert ? (
-                                    <SweetAlert
-                                        title={
-                                            <span id="alert_title">
-                                                <LangProvider LangKey="logout_alert" />
-                                            </span>
-                                        }
-                                        onConfirm={() => {
-                                            this.setState({ logoutAlert: false });
-                                            window.open(
-                                                "https://www.twitch.tv",
-                                                "PopupWin",
-                                                "width=3000,height=3000"
-                                            );
-                                        }}
-                                    />
-                                ) : null}
-                            </div>
                             <div className="dropdown d-lg-inline-block ml-1">
                                 <div className="header-item">
                                     <select

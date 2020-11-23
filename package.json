@@ -1,18 +1,29 @@
 {
-  "name": "skotereact",
-  "version": "2.0.0",
-  "description": "merge.txt asdasdasda",
-  "homepage": "./",
+  "name": "tming",
+  "version": "0.0.1",
+  "description": "Make the broadcast easy and the viewers have fun!",
+  "homepage": "https://www.tming.tv",
   "scripts": {
     "start": "react-scripts start",
     "deploy": "npm run react_build && npm run server_deploy",
     "react_build": "npm install && react-scripts --max_old_space_size=8000 build && rm -rf server/react && mv -f build server/react",
     "server_deploy": "cd server && npm run deploy"
   },
-  "keywords": [],
-  "license": "ISC",
+  "keywords": [
+    "broadcast",
+    "streamer"
+  ],
+  "license": "MIT",
   "devDependencies": {
-    "electron": "^10.1.4"
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.0.0",
+    "prettier": "^2.2.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.30",
@@ -39,7 +50,6 @@
     "d3-cloud": "^1.2.5",
     "graceful-fs": "^4.2.4",
     "history": "^5.0.0",
-    "http-proxy-middleware": "^1.0.5",
     "immer": "^7.0.8",
     "kor-string-similarity": "^1.0.2",
     "mdbreact": "^4.25.4",
@@ -95,7 +105,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "proxy": "http://127.0.0.1:5000",
-  "secure": false
+  }
 }
