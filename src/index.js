@@ -11,7 +11,6 @@ import store from './store';
 const app = (
   <Provider store={store}>
     <Helmet>
-      {/* head 부분 */}
       <title>Tming</title>
     </Helmet>
     <BrowserRouter>

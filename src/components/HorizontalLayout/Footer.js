@@ -19,22 +19,26 @@ const Brand = styled.div`
 `;
 
 const Footer = () => {
+  const year = new Date().getFullYear();
   return (
-    <React.Fragment>
+    <>
       <footer className="footer">
-        <Container fluid={true}>
+        <Container fluid="true">
           <FooterTop>
             <Brand>Tming</Brand>
             <div>
               <div>Contact us</div>
               <div>
-                <i class="far fa-envelope"></i>
+                <i className="far fa-envelope" />
                 <span>swmaestroccjam@gmail.com</span>
               </div>
             </div>
           </FooterTop>
           <Row>
-            <Col md={6}>{new Date().getFullYear()} © Tming.</Col>
+            <Col md={6}>
+              <span>{year}</span>
+              <span> © Tming.</span>
+            </Col>
             <Col md={6}>
               <div className="text-sm-right d-none d-sm-block">
                 Design & Develop by CCJAM
@@ -43,7 +47,7 @@ const Footer = () => {
           </Row>
         </Container>
       </footer>
-    </React.Fragment>
+    </>
   );
 };
 

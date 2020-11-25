@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const Language = {
   // english
@@ -252,16 +253,10 @@ export function convert() {
   return ret;
 }
 
-export class LangProvider extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      key: props.LangKey,
-    };
-  }
+export const LangProvider = ({ LangKey }) => {
+  return <>{convert()[LangKey]}</>;
+};
 
-  render() {
-    const { key } = this.state;
-    return <>{convert()[key]}</>;
-  }
-}
+LangProvider.propTypes = {
+  LangKey: PropTypes.string.isRequired,
+};

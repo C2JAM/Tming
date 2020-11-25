@@ -50,12 +50,6 @@ const LogoWrapper = styled.div`
   }
 `;
 
-const Icon = styled.i`
-  &:hover {
-    color: white;
-  }
-`;
-
 class Header extends Component {
   constructor(props) {
     super(props);
@@ -67,33 +61,6 @@ class Header extends Component {
       logoutAlert: false,
     };
     this.toggleFullscreen = this.toggleFullscreen.bind(this);
-  }
-
-  toggleFullscreen() {
-    if (
-      !document.fullscreenElement &&
-      /* alternative standard method */ !document.mozFullScreenElement &&
-      !document.webkitFullscreenElement
-    ) {
-      // current working methods
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-      } else if (document.documentElement.mozRequestFullScreen) {
-        document.documentElement.mozRequestFullScreen();
-      } else if (document.documentElement.webkitRequestFullscreen) {
-        document.documentElement.webkitRequestFullscreen(
-          Element.ALLOW_KEYBOARD_INPUT,
-        );
-      }
-    } else {
-      if (document.cancelFullScreen) {
-        document.cancelFullScreen();
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-      } else if (document.webkitCancelFullScreen) {
-        document.webkitCancelFullScreen();
-      }
-    }
   }
 
   changeLanguage = event => {
@@ -130,8 +97,8 @@ class Header extends Component {
               <Link to="/">
                 <LogoWrapper>
                   <img src={LogoImage} alt="" />
-                  <div className="logo-eye__1"></div>
-                  <div className="logo-eye__2"></div>
+                  <div className="logo-eye__1" />
+                  <div className="logo-eye__2" />
                 </LogoWrapper>
               </Link>
 

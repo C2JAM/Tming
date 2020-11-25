@@ -1,11 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import styled, { keyframes } from 'styled-components';
+
 import { LangProvider } from '../../components/Languages/languages';
 
-import ProfileImage from '../../assets/images/profile-img-modified.png';
 import WaveImage from '../../assets/images/login/wave.svg';
 import DownWaveImage from '../../assets/images/login/down_wave.svg';
-import LoginButton from './LoginButton';
 import LogoImage from '../../assets/images/logo/tming_logo.png';
 
 const animate = keyframes`
@@ -93,6 +92,7 @@ const TextSub = styled.div`
   display: flex;
   align-items: center;
 `;
+
 const Separator = styled.div`
   width: 2px;
   height: 24px;
@@ -103,15 +103,6 @@ const Separator = styled.div`
 const Line = styled.hr`
   border-color: rgba(33, 39, 53, 0.9);
   border-width: 2px;
-`;
-
-const ALink = styled.a`
-  font-size: 16px;
-  color: rgba(255, 255, 255, 0.7);
-  transition: all 0.1s ease-in-out;
-  &:hover {
-    color: rgba(33, 39, 53, 0.7);
-  }
 `;
 
 const Wave1 = keyframes`
@@ -148,14 +139,6 @@ const Wave4 = keyframes`
     100% {
         background-position-x: -2000px;
     }
-`;
-
-const Profile = styled.img`
-  position: absolute;
-  width: 625px;
-  right: 60px;
-  bottom: 0;
-  z-index: -1;
 `;
 
 const BackWaves = styled.div`
@@ -215,94 +198,68 @@ const LanguageSelector = styled.div`
   right: 40px;
 `;
 
-class LoginPage extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      lang: window.localStorage.getItem('lang'),
-    };
-  }
-
-  changeLanguage = event => {
+function Index() {
+  function changeLanguage(event) {
     const lang = event.target.value;
     window.localStorage.setItem('lang', lang);
     this.setState({ lang: lang });
     window.location.href = '#';
-  };
-
-  handleClick = () => {};
-
-  render() {
-    return (
-      <>
-        <BrowserWrapper>
-          <LogoWrapper>
-            <img src={LogoImage} alt="" />
-            <div className="logo-eye__1" />
-            <div className="logo-eye__2" />
-            <h1>TMING</h1>
-          </LogoWrapper>
-          <LoginWrapper>
-            <LanguageSelector>
-              <select
-                name="languages"
-                id="language"
-                onChange={this.changeLanguage}
-                value={this.state.lang}
-                onClick={() => window.gtag('event', 'setLanguage')}
-              >
-                <option value="en">🇺🇸 English</option>
-                <option value="ko">🇰🇷 Korean</option>
-              </select>
-            </LanguageSelector>
-            <BackWaves>
-              <div className="wave wave1" />
-              <div className="wave wave2" />
-              <div className="wave wave3" />
-              <div className="wave wave4" />
-              <div className="down-wave wave1" />
-              <div className="down-wave wave2" />
-              <div className="down-wave wave3" />
-              <div className="down-wave wave4" />
-            </BackWaves>
-            <Profile src={ProfileImage} />
-            <LoginBox>
-              <TextMain>
-                <p>
-                  <div className="login-box__strong">
-                    <LangProvider LangKey="login_title" />
-                  </div>
-                </p>
-                <p>
-                  <LangProvider LangKey="login_description_1" />
-                </p>
-                <p>
-                  <LangProvider LangKey="login_description_2" />
-                </p>
-                <Line />
-              </TextMain>
-              <TextSub>
-                <LoginButton handleClick={this.handleClick} />
-                <Separator />
-                <ALink
-                  onClick={() => {
-                    window.gtag('event', 'goLandigPage');
-                    window.open(
-                      'https://tming.tv',
-                      'PopupWin',
-                      'width=3000,height=3000',
-                    );
-                  }}
-                >
-                  <LangProvider LangKey="login_description_3" />
-                </ALink>
-              </TextSub>
-            </LoginBox>
-          </LoginWrapper>
-        </BrowserWrapper>
-      </>
-    );
   }
+
+  return (
+    <>
+      <BrowserWrapper>
+        <LogoWrapper>
+          <img src={LogoImage} alt="" />
+          <div className="logo-eye__1" />
+          <div className="logo-eye__2" />
+          <h1>TMING</h1>
+        </LogoWrapper>
+        <LoginWrapper>
+          <LanguageSelector>
+            <select
+              name="languages"
+              id="language"
+              onChange={changeLanguage}
+              value={this.state.lang}
+            >
+              <option value="en">🇺🇸 English</option>
+              <option value="ko">🇰🇷 Korean</option>
+            </select>
+          </LanguageSelector>
+          <BackWaves>
+            <div className="wave wave1" />
+            <div className="wave wave2" />
+            <div className="wave wave3" />
+            <div className="wave wave4" />
+            <div className="down-wave wave1" />
+            <div className="down-wave wave2" />
+            <div className="down-wave wave3" />
+            <div className="down-wave wave4" />
+          </BackWaves>
+          <LoginBox>
+            <TextMain>
+              <p>
+                <div className="login-box__strong">
+                  <LangProvider LangKey="login_title" />
+                </div>
+              </p>
+              <p>
+                <LangProvider LangKey="login_description_1" />
+              </p>
+              <p>
+                <LangProvider LangKey="login_description_2" />
+              </p>
+              <Line />
+            </TextMain>
+            <TextSub>
+              <Separator />
+            </TextSub>
+          </LoginBox>
+        </LoginWrapper>
+      </BrowserWrapper>
+    </>
+  );
 }
 
-export default LoginPage;
+export default Index;
