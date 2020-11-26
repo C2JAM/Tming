@@ -246,16 +246,17 @@ export function convert() {
 
   const index = Language[localLanguage];
 
-  const ret = sentences.keys().forEach(value => {
+  const ret = {};
+  Object.keys(sentences).forEach(value => {
     ret[value] = sentences[value][index];
   });
 
   return ret;
 }
 
-export const LangProvider = ({ LangKey }) => {
+export function LangProvider({ LangKey }) {
   return <>{convert()[LangKey]}</>;
-};
+}
 
 LangProvider.propTypes = {
   LangKey: PropTypes.string.isRequired,

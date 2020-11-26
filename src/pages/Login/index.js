@@ -1,8 +1,15 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import styled, { keyframes } from 'styled-components';
 
+// actions
+import { changeLanguage } from '../../store/actions';
+
+// language
 import { LangProvider } from '../../components/Languages/languages';
 
+// assets
 import WaveImage from '../../assets/images/login/wave.svg';
 import DownWaveImage from '../../assets/images/login/down_wave.svg';
 import LogoImage from '../../assets/images/logo/tming_logo.png';
@@ -198,12 +205,10 @@ const LanguageSelector = styled.div`
   right: 40px;
 `;
 
-function Index() {
-  function changeLanguage(event) {
-    const lang = event.target.value;
-    window.localStorage.setItem('lang', lang);
-    this.setState({ lang: lang });
-    window.location.href = '#';
+function Index({ lang: Lang, changeLanguage: ChangeLanguage }) {
+  function onChangeLanguage(event) {
+    const { value: nextLang } = event.target;
+    ChangeLanguage(nextLang);
   }
 
   return (
@@ -220,8 +225,8 @@ function Index() {
             <select
               name="languages"
               id="language"
-              onChange={changeLanguage}
-              value={this.state.lang}
+              value={Lang}
+              onChange={onChangeLanguage}
             >
               <option value="en">🇺🇸 English</option>
               <option value="ko">🇰🇷 Korean</option>
@@ -262,4 +267,17 @@ function Index() {
   );
 }
 
-export default Index;
+Index.propTypes = {
+  lang: PropTypes.string.isRequired,
+  changeLanguage: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = state => {
+  return {
+    lang: state.lang,
+  };
+};
+
+const mapDispatchToProps = { changeLanguage };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Index);

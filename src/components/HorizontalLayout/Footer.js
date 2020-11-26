@@ -1,54 +1,61 @@
 import React from 'react';
-import { Container, Row, Col } from 'reactstrap';
 import styled from 'styled-components';
-
-const FooterTop = styled.div`
-  height: 80px;
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  font-size: 14px;
-
-  i {
-    margin-right: 14px;
-  }
-`;
 
 const Brand = styled.div`
   font-size: 28px;
   font-weight: 600;
 `;
 
-const Footer = () => {
+const Footer = styled.footer`
+  display: flex;
+  flex-direction: column;
+  background-color: #222831;
+  padding: 50px 5vw 50px 5vw;
+
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .footer-bottom {
+    display: flex;
+    height: 100px;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+`;
+
+function Index() {
   const year = new Date().getFullYear();
+
   return (
     <>
-      <footer className="footer">
-        <Container fluid="true">
-          <FooterTop>
-            <Brand>Tming</Brand>
+      <Footer>
+        <div className="footer-top">
+          <Brand>Tming</Brand>
+          <div>
+            <div>Contact us</div>
             <div>
-              <div>Contact us</div>
-              <div>
-                <i className="far fa-envelope" />
-                <span>swmaestroccjam@gmail.com</span>
-              </div>
+              <i className="far fa-envelope" />
+              <span>swmaestroccjam@gmail.com</span>
             </div>
-          </FooterTop>
-          <Row>
-            <Col md={6}>
-              <span>{year}</span>
-              <span> © Tming.</span>
-            </Col>
-            <Col md={6}>
-              <div className="text-sm-right d-none d-sm-block">
-                Design & Develop by CCJAM
-              </div>
-            </Col>
-          </Row>
-        </Container>
-      </footer>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <div>
+            <span>{year}</span>
+            <span> © Tming.</span>
+          </div>
+          <div>
+            <div className="text-sm-right d-none d-sm-block">
+              Design & Develop by CCJAM
+            </div>
+          </div>
+        </div>
+      </Footer>
     </>
   );
-};
+}
 
-export default Footer;
+export default Index;

@@ -14,5 +14,6 @@ module.exports = {
     ],
     'react/jsx-props-no-spreading': ['off'],
     'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx'] }],
+    'no-console': ['error', { allow: ['warn', 'error'] }],
   },
 };

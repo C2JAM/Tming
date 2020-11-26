@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Switch, BrowserRouter as Router } from 'react-router-dom';
 import { connect } from 'react-redux';
-import * as tmi from 'tmi.js';
-import Cookies from 'react-cookies';
+import { nanoid } from 'nanoid';
+import PropTypes from 'prop-types';
+
+// actions
+import { changeLanguage } from './store/actions';
 
 // Import Routes
 import {
@@ -17,100 +20,74 @@ import HorizontalLayout from './components/HorizontalLayout';
 import NonAuthLayout from './components/NonAuthLayout';
 
 // Import scss
-import './assets/scss/theme.scss';
+import './assets/scss/index.scss';
 
-function App() {
+function App({ lang: Lang, changeLanguage: ChangeLanguage }) {
   useEffect(() => {
     // 초기 언어 설정
     try {
-      let lang = window.localStorage.getItem('lang');
+      let tmpLang = window.localStorage.getItem('lang');
 
-      if (lang === null) {
-        if (navigator.language) {
-          lang = navigator.language.substring(0, 2).toLowerCase();
-        } else {
-          lang = 'en';
-        }
+      if (tmpLang === null) {
         // 초기 설정값이 없으면 브라우저의 언어로 설정하자.
-        window.localStorage.setItem('lang', lang);
+        if (navigator.language) {
+          tmpLang = navigator.language.substring(0, 2).toLowerCase();
+        }
+
+        switch (tmpLang) {
+          case 'en':
+            tmpLang = 'en';
+            break;
+          case 'ko':
+            tmpLang = 'ko';
+            break;
+          default:
+            tmpLang = 'en';
+            break;
+        }
       }
+
+      ChangeLanguage(tmpLang);
     } catch (err) {
       console.error(err);
     }
-
-    // 서버의 트위치 챗봇 연결
-    try {
-      fetch('/api/v1/bot/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        redirect: 'follow',
-        body: JSON.stringify({
-          login: this.state.login,
-          accessToken: this.state.accessToken,
-        }),
-      });
-    } catch (err) {
-      console.error(err);
-    }
-
-    // 클라이언트의 트위치 챗봇 연결
-    try {
-      this.client = new tmi.Client({
-        connection: {
-          secure: true,
-          reconnect: true,
-        },
-        channels: [`${this.state.login}`],
-      });
-
-      // 트위치 챗봇 연결
-      this.client.connect();
-    } catch (err) {
-      console.error(err);
-    }
-
-    return () => {
-      this.client.disconnect();
-    };
   }, []);
 
   return (
     <>
       <Router>
         <Switch>
-          {publicRoutes.map((route, idx) => (
+          {publicRoutes.map(route => (
             <AppRoute
               path={route.path}
               layout={HorizontalLayout}
               component={route.component}
-              key={idx}
+              key={nanoid()}
               isAuthProtected={false}
               isLayout={false}
             />
           ))}
 
-          {noLayoutRoutes.map((route, idx) => (
+          {noLayoutRoutes.map(route => (
             <AppRoute
               path={route.path}
               // 레이아웃을 false로 처리
               layout={NonAuthLayout}
               component={route.component}
-              key={idx}
+              key={nanoid()}
               isAuthProtected={false}
               isLayout={false}
             />
           ))}
 
-          {authProtectedRoutes.map((route, idx) => (
+          {authProtectedRoutes.map(route => (
             <AppRoute
               path={route.path}
               layout={HorizontalLayout}
               component={route.component}
-              key={idx}
-              isAuthProtected={true}
-              isLayout={true}
+              key={nanoid()}
+              isAuthProtected
+              isLayout
             />
           ))}
         </Switch>
@@ -119,10 +96,17 @@ function App() {
   );
 }
 
+App.propTypes = {
+  lang: PropTypes.string.isRequired,
+  changeLanguage: PropTypes.func.isRequired,
+};
+
 const mapStateToProps = state => {
   return {
-    layout: state.Layout,
+    lang: state.lang,
   };
 };
 
-export default connect(mapStateToProps, null)(App);
+const mapDispatchToProps = { changeLanguage };
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
