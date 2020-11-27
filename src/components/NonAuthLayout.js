@@ -1,28 +1,15 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-class NonAuthLayout extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-    this.capitalizeFirstLetter.bind(this);
-  }
+function NonAuthLayout({ children }) {
+  useEffect(() => {
+    document.title = '테스트 | Tming';
+  }, []);
 
-  componentDidMount() {
-    const currentage = this.capitalizeFirstLetter(this.props.location.pathname);
-
-    document.title = currentage + ' | Tming';
-  }
-
-  capitalizeFirstLetter = string => {
-    return string.charAt(1).toUpperCase() + string.slice(2);
-  };
-
-  render() {
-    const { children } = this.props;
-
-    return <>{children}</>;
-  }
+  return <>{children}</>;
 }
+
+NonAuthLayout.propTypes = { children: PropTypes.node.isRequired };
 
 export default withRouter(NonAuthLayout);

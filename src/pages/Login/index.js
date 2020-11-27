@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import styled, { keyframes } from 'styled-components';
 
+// actions
+import { changeLanguage, connectToTwitchChat } from '../../store/actions';
+
+// language
 import { LangProvider } from '../../components/Languages/languages';
 
+// assets
 import WaveImage from '../../assets/images/login/wave.svg';
 import DownWaveImage from '../../assets/images/login/down_wave.svg';
 import LogoImage from '../../assets/images/logo/tming_logo.png';
@@ -198,12 +206,27 @@ const LanguageSelector = styled.div`
   right: 40px;
 `;
 
-function Index() {
-  function changeLanguage(event) {
-    const lang = event.target.value;
-    window.localStorage.setItem('lang', lang);
-    this.setState({ lang: lang });
-    window.location.href = '#';
+function Index({
+  lang: Lang,
+  changeLanguage: ChangeLanguage,
+  connectToTwitchChat: dispatchConnectToTwitchChat,
+}) {
+  const [twitchId, setTwitchId] = useState('');
+  const history = useHistory();
+
+  function onChangeLanguage(event) {
+    const { value: nextLang } = event.target;
+    ChangeLanguage(nextLang);
+  }
+
+  function onChangeTwitchId(event) {
+    const { value: newTwitchId } = event.target;
+    setTwitchId(newTwitchId);
+  }
+
+  function onClickStartButton() {
+    dispatchConnectToTwitchChat(twitchId);
+    history.push('/vote');
   }
 
   return (
@@ -220,10 +243,12 @@ function Index() {
             <select
               name="languages"
               id="language"
-              onChange={changeLanguage}
-              value={this.state.lang}
+              value={Lang}
+              onChange={onChangeLanguage}
             >
+              {/*  eslint-disable-next-line */}
               <option value="en">🇺🇸 English</option>
+              {/*  eslint-disable-next-line */}
               <option value="ko">🇰🇷 Korean</option>
             </select>
           </LanguageSelector>
@@ -240,9 +265,9 @@ function Index() {
           <LoginBox>
             <TextMain>
               <p>
-                <div className="login-box__strong">
+                <span className="login-box__strong">
                   <LangProvider LangKey="login_title" />
-                </div>
+                </span>
               </p>
               <p>
                 <LangProvider LangKey="login_description_1" />
@@ -253,7 +278,15 @@ function Index() {
               <Line />
             </TextMain>
             <TextSub>
+              <input
+                value={twitchId}
+                onChange={onChangeTwitchId}
+                placeholder="트위치 아이디 입력"
+              />
               <Separator />
+              <button type="button" onClick={onClickStartButton}>
+                시작
+              </button>
             </TextSub>
           </LoginBox>
         </LoginWrapper>
@@ -262,4 +295,18 @@ function Index() {
   );
 }
 
-export default Index;
+Index.propTypes = {
+  lang: PropTypes.string.isRequired,
+  changeLanguage: PropTypes.func.isRequired,
+  connectToTwitchChat: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = state => {
+  return {
+    lang: state.Layout.lang,
+  };
+};
+
+const mapDispatchToProps = { changeLanguage, connectToTwitchChat };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Index);

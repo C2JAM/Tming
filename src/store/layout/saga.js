@@ -1,205 +1,52 @@
 // @flow
-import { all, call, fork, takeEvery, put } from 'redux-saga/effects';
+import { all, fork, takeEvery, select } from 'redux-saga/effects';
 
-import {
-  CHANGE_LAYOUT,
-  CHANGE_LAYOUT_WIDTH,
-  CHANGE_SIDEBAR_THEME,
-  CHANGE_SIDEBAR_TYPE,
-  CHANGE_TOPBAR_THEME,
-  TOGGLE_RIGHT_SIDEBAR,
-  SHOW_RIGHT_SIDEBAR,
-  HIDE_RIGHT_SIDEBAR,
-} from './actionTypes';
-
-import {
-  changeSidebarType as changeSidebarTypeAction,
-  changeTopbarTheme as changeTopbarThemeAction,
-} from './actions';
+import { CHANGE_LANGUAGE, CONNECT_TO_TWITCH_CHAT } from './actionTypes';
 
 /**
- * Changes the body attribute
+ * Changes the site language
+ * @param {string} payload.lang
  */
-function changeBodyAttribute(attribute, value) {
-  if (document.body) document.body.setAttribute(attribute, value);
-  return true;
+function* changeLanguage({ payload: lang }) {
+  yield window.localStorage.setItem('lang', lang);
 }
 
 /**
- * Toggle the class on body
- * @param {*} cssClass
+ * Connect to twitch chat server
+ * @param {string} payload.twitchId
  */
-function manageBodyClass(cssClass, action = 'toggle') {
-  switch (action) {
-    case 'add':
-      if (document.body) document.body.classList.add(cssClass);
-      break;
-    case 'remove':
-      if (document.body) document.body.classList.remove(cssClass);
-      break;
-    default:
-      if (document.body) document.body.classList.toggle(cssClass);
-      break;
-  }
+function* connectToTwitchServer({ payload: twitchId }) {
+  const {
+    Layout: { twitchChat: client },
+  } = yield select();
 
-  return true;
-}
+  yield client.connect().catch(err => console.warn(err));
 
-/**
- * Changes the layout type
- * @param {*} param0
- */
-function* changeLayout({ payload: layout }) {
-  try {
-    if (layout === 'horizontal') {
-      yield put(changeTopbarThemeAction('dark'));
-      document.body.removeAttribute('data-sidebar');
-      document.body.removeAttribute('data-sidebar-size');
-    } else {
-      yield put(changeTopbarThemeAction('light'));
-    }
-    yield call(changeBodyAttribute, 'data-layout', layout);
-  } catch (error) {}
-}
+  const channels = yield client.getChannels().map(value => value.substr(1));
 
-/**
- * Changes the layout width
- * @param {*} param0
- */
-function* changeLayoutWidth({ payload: width }) {
-  try {
-    if (width === 'boxed') {
-      yield put(changeSidebarTypeAction('icon'));
-    } else {
-      yield put(changeSidebarTypeAction('default'));
-    }
-    yield call(changeBodyAttribute, 'data-layout-size', width);
-  } catch (error) {}
-}
+  yield channels.forEach(value => client.part(value));
+  yield client.join(twitchId).catch(err => console.warn(err));
+  window.localStorage.setItem('twitchId', twitchId);
 
-/**
- * Changes the left sidebar theme
- * @param {*} param0
- */
-function* changeLeftSidebarTheme({ payload: theme }) {
-  try {
-    yield call(changeBodyAttribute, 'data-sidebar', theme);
-  } catch (error) {}
-}
-
-/**
- * Changes the topbar theme
- * @param {*} param0
- */
-function* changeTopbarTheme({ payload: theme }) {
-  try {
-    yield call(changeBodyAttribute, 'data-topbar', theme);
-  } catch (error) {}
-}
-
-/**
- * Changes the left sidebar type
- * @param {*} param0
- */
-function* changeLeftSidebarType({ payload: { sidebarType, isMobile } }) {
-  try {
-    switch (sidebarType) {
-      case 'compact':
-        yield call(changeBodyAttribute, 'data-sidebar-size', 'small');
-        yield call(manageBodyClass, 'sidebar-enable', 'remove');
-        yield call(manageBodyClass, 'vertical-collpsed', 'remove');
-        break;
-      case 'icon':
-        yield call(changeBodyAttribute, 'data-keep-enlarged', 'true');
-        yield call(manageBodyClass, 'vertical-collpsed', 'add');
-        break;
-      case 'condensed':
-        yield call(manageBodyClass, 'sidebar-enable', 'add');
-        if (!isMobile) yield call(manageBodyClass, 'vertical-collpsed', 'add');
-        break;
-      default:
-        yield call(changeBodyAttribute, 'data-sidebar-size', '');
-        yield call(manageBodyClass, 'sidebar-enable', 'remove');
-        if (!isMobile)
-          yield call(manageBodyClass, 'vertical-collpsed', 'remove');
-        break;
-    }
-  } catch (error) {}
-}
-
-/**
- * Toggles the rightsidebar
- */
-function* toggleRightSidebar() {
-  try {
-    yield call(manageBodyClass, 'right-bar-enabled');
-  } catch (error) {}
-}
-
-/**
- * Show the rightsidebar
- */
-function* showRightSidebar() {
-  try {
-    yield call(manageBodyClass, 'right-bar-enabled', 'add');
-  } catch (error) {}
-}
-
-/**
- * Hides the rightsidebar
- */
-function* hideRightSidebar() {
-  try {
-    yield call(manageBodyClass, 'right-bar-enabled', 'remove');
-  } catch (error) {}
+  yield client.on('message', (channel, tags, message, self) => {
+    if (self) return;
+    console.warn(message);
+  });
 }
 
 /**
  * Watchers
  */
-export function* watchChangeLayoutType() {
-  yield takeEvery(CHANGE_LAYOUT, changeLayout);
+export function* watchChangeLanguage() {
+  yield takeEvery(CHANGE_LANGUAGE, changeLanguage);
 }
 
-export function* watchChangeLayoutWidth() {
-  yield takeEvery(CHANGE_LAYOUT_WIDTH, changeLayoutWidth);
-}
-
-export function* watchChangeLeftSidebarTheme() {
-  yield takeEvery(CHANGE_SIDEBAR_THEME, changeLeftSidebarTheme);
-}
-
-export function* watchChangeLeftSidebarType() {
-  yield takeEvery(CHANGE_SIDEBAR_TYPE, changeLeftSidebarType);
-}
-
-export function* watchChangeTopbarTheme() {
-  yield takeEvery(CHANGE_TOPBAR_THEME, changeTopbarTheme);
-}
-
-export function* watchToggleRightSidebar() {
-  yield takeEvery(TOGGLE_RIGHT_SIDEBAR, toggleRightSidebar);
-}
-
-export function* watchShowRightSidebar() {
-  yield takeEvery(SHOW_RIGHT_SIDEBAR, showRightSidebar);
-}
-
-export function* watchHideRightSidebar() {
-  yield takeEvery(HIDE_RIGHT_SIDEBAR, hideRightSidebar);
+export function* watchConnectToTwitchServer() {
+  yield takeEvery(CONNECT_TO_TWITCH_CHAT, connectToTwitchServer);
 }
 
 function* LayoutSaga() {
-  yield all([
-    fork(watchChangeLayoutType),
-    fork(watchChangeLayoutWidth),
-    fork(watchChangeLeftSidebarTheme),
-    fork(watchChangeLeftSidebarType),
-    fork(watchToggleRightSidebar),
-    fork(watchShowRightSidebar),
-    fork(watchHideRightSidebar),
-    fork(watchChangeTopbarTheme),
-  ]);
+  yield all([fork(watchChangeLanguage), fork(watchConnectToTwitchServer)]);
 }
 
 export default LayoutSaga;

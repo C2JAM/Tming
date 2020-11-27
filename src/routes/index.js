@@ -18,10 +18,10 @@ const authProtectedRoutes = [
   // { path: '/wordcloud', component: WordCloud },
 
   // 투표
-  { path: '/vote', componenet: Vote },
+  { path: '/vote', component: Vote },
 
   // this route should be at the end of all other routes
-  { path: '/', exact: true, component: () => <Redirect to="/home" /> },
+  { path: '/', exact: true, component: () => <Redirect to="/login" /> },
 ];
 
 // 레이아웃이 필요없는 페이지들
