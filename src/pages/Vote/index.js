@@ -1,24 +1,26 @@
+import { nanoid } from 'nanoid';
 import React from 'react';
 import styled from 'styled-components';
+
+// sub components
+import VoteForm from './voteForm';
+import VotedUsers from './votedUsers';
 
 const RootGrid = styled.div`
   display: grid;
   grid-template:
-    'voted-users vote-form chat' 100vh
-    / 1fr 1fr 1fr;
+    'users form chat' minmax(90vh, 1fr)
+    / 1fr 1.5fr 1fr;
 
   .voted-users {
-    background-color: salmon;
-    grid-area: voted-users;
+    grid-area: users;
   }
 
   .vote-form {
-    background-color: yellow;
-    grid-area: vote-form;
+    grid-area: form;
   }
 
   .chat {
-    background-color: green;
     grid-area: chat;
   }
 `;
@@ -27,9 +29,22 @@ function Index() {
   return (
     <>
       <RootGrid>
-        <div className="voted-users" />
-        <div className="vote-form" />
-        <div className="chat" />
+        <div className="voted-users">
+          <VotedUsers />
+        </div>
+        <div className="vote-form">
+          <VoteForm />
+        </div>
+        <div className="chat">
+          <iframe
+            title={nanoid()}
+            frameBorder="0"
+            scrolling="no"
+            src="https://www.twitch.tv/embed/luceinaltis2020/chat?parent=127.0.0.1&darkpopout"
+            height="100%"
+            width="100%"
+          />
+        </div>
       </RootGrid>
     </>
   );

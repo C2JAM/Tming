@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import styled, { keyframes } from 'styled-components';
 
 // actions
-import { changeLanguage } from '../../store/actions';
+import { changeLanguage, connectToTwitchChat } from '../../store/actions';
 
 // language
 import { LangProvider } from '../../components/Languages/languages';
@@ -205,10 +206,27 @@ const LanguageSelector = styled.div`
   right: 40px;
 `;
 
-function Index({ lang: Lang, changeLanguage: ChangeLanguage }) {
+function Index({
+  lang: Lang,
+  changeLanguage: ChangeLanguage,
+  connectToTwitchChat: dispatchConnectToTwitchChat,
+}) {
+  const [twitchId, setTwitchId] = useState('');
+  const history = useHistory();
+
   function onChangeLanguage(event) {
     const { value: nextLang } = event.target;
     ChangeLanguage(nextLang);
+  }
+
+  function onChangeTwitchId(event) {
+    const { value: newTwitchId } = event.target;
+    setTwitchId(newTwitchId);
+  }
+
+  function onClickStartButton() {
+    dispatchConnectToTwitchChat(twitchId);
+    history.push('/vote');
   }
 
   return (
@@ -228,7 +246,9 @@ function Index({ lang: Lang, changeLanguage: ChangeLanguage }) {
               value={Lang}
               onChange={onChangeLanguage}
             >
+              {/*  eslint-disable-next-line */}
               <option value="en">🇺🇸 English</option>
+              {/*  eslint-disable-next-line */}
               <option value="ko">🇰🇷 Korean</option>
             </select>
           </LanguageSelector>
@@ -258,7 +278,15 @@ function Index({ lang: Lang, changeLanguage: ChangeLanguage }) {
               <Line />
             </TextMain>
             <TextSub>
+              <input
+                value={twitchId}
+                onChange={onChangeTwitchId}
+                placeholder="트위치 아이디 입력"
+              />
               <Separator />
+              <button type="button" onClick={onClickStartButton}>
+                시작
+              </button>
             </TextSub>
           </LoginBox>
         </LoginWrapper>
@@ -270,6 +298,7 @@ function Index({ lang: Lang, changeLanguage: ChangeLanguage }) {
 Index.propTypes = {
   lang: PropTypes.string.isRequired,
   changeLanguage: PropTypes.func.isRequired,
+  connectToTwitchChat: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -278,6 +307,6 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = { changeLanguage };
+const mapDispatchToProps = { changeLanguage, connectToTwitchChat };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Index);

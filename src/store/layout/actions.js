@@ -5,7 +5,7 @@ export const changeLanguage = lang => ({
   payload: lang,
 });
 
-export const connectToTwitchChat = lang => ({
+export const connectToTwitchChat = twitchId => ({
   type: CONNECT_TO_TWITCH_CHAT,
-  payload: lang,
+  payload: twitchId,
 });

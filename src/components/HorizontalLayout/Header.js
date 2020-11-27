@@ -124,7 +124,9 @@ function Index({ lang: Lang, changeLanguage: changeLanguageDispatch }) {
             value={Lang}
             onChange={onChangeLanguage}
           >
+            {/*  eslint-disable-next-line */}
             <option value="en">🇺🇸 English</option>
+            {/*  eslint-disable-next-line */}
             <option value="ko">🇰🇷 Korean</option>
           </select>
         </div>

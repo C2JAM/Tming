@@ -22,7 +22,17 @@ import NonAuthLayout from './components/NonAuthLayout';
 // Import scss
 import './assets/scss/index.scss';
 
-function App({ lang: Lang, changeLanguage: ChangeLanguage }) {
+function App({
+  lang: Lang,
+  changeLanguage: ChangeLanguage,
+  twitchChat: TwitchChat,
+}) {
+  useEffect(() => {
+    return () => {
+      TwitchChat.disconnect();
+    };
+  }, [TwitchChat]);
+
   useEffect(() => {
     // 초기 언어 설정
     try {
@@ -51,7 +61,7 @@ function App({ lang: Lang, changeLanguage: ChangeLanguage }) {
     } catch (err) {
       console.error(err);
     }
-  }, []);
+  }, [Lang, ChangeLanguage]);
 
   return (
     <>
@@ -99,11 +109,13 @@ function App({ lang: Lang, changeLanguage: ChangeLanguage }) {
 App.propTypes = {
   lang: PropTypes.string.isRequired,
   changeLanguage: PropTypes.func.isRequired,
+  twitchChat: PropTypes.node.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     lang: state.lang,
+    twitchChat: state.twitchChat,
   };
 };
 
