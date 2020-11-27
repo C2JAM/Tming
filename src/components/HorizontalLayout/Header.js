@@ -142,7 +142,7 @@ Index.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    lang: state.lang,
+    lang: state.Layout.lang,
   };
 };
 

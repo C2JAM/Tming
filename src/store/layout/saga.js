@@ -26,6 +26,7 @@ function* connectToTwitchServer({ payload: twitchId }) {
 
   yield channels.forEach(value => client.part(value));
   yield client.join(twitchId).catch(err => console.warn(err));
+  window.localStorage.setItem('twitchId', twitchId);
 
   yield client.on('message', (channel, tags, message, self) => {
     if (self) return;

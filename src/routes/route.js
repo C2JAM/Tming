@@ -30,8 +30,8 @@ const AppRoute = ({ component: Component, layout: Layout, isLayout }) => (
 );
 
 AppRoute.propTypes = {
-  component: PropTypes.func.isRequired,
-  layout: PropTypes.func.isRequired,
+  component: PropTypes.elementType.isRequired,
+  layout: PropTypes.elementType.isRequired,
   isLayout: PropTypes.bool.isRequired,
 };
 

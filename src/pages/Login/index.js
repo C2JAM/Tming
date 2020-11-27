@@ -265,9 +265,9 @@ function Index({
           <LoginBox>
             <TextMain>
               <p>
-                <div className="login-box__strong">
+                <span className="login-box__strong">
                   <LangProvider LangKey="login_title" />
-                </div>
+                </span>
               </p>
               <p>
                 <LangProvider LangKey="login_description_1" />
@@ -303,7 +303,7 @@ Index.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    lang: state.lang,
+    lang: state.Layout.lang,
   };
 };
 

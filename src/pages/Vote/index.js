@@ -1,6 +1,8 @@
 import { nanoid } from 'nanoid';
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
 // sub components
 import VoteForm from './voteForm';
@@ -25,7 +27,7 @@ const RootGrid = styled.div`
   }
 `;
 
-function Index() {
+function Index({ twitchId: TwitchId }) {
   return (
     <>
       <RootGrid>
@@ -40,7 +42,7 @@ function Index() {
             title={nanoid()}
             frameBorder="0"
             scrolling="no"
-            src="https://www.twitch.tv/embed/luceinaltis2020/chat?parent=127.0.0.1&darkpopout"
+            src={`https://www.twitch.tv/embed/${TwitchId}/chat?parent=127.0.0.1&darkpopout`}
             height="100%"
             width="100%"
           />
@@ -50,4 +52,12 @@ function Index() {
   );
 }
 
-export default Index;
+Index.propTypes = { twitchId: PropTypes.string.isRequired };
+
+const mapStateToProps = state => {
+  return {
+    twitchId: state.Layout.twitchId,
+  };
+};
+
+export default connect(mapStateToProps, null)(Index);

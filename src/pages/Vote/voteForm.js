@@ -132,7 +132,7 @@ function VoteForm() {
         <div className="bottom">
           {voteItems.map((value, index) => {
             return (
-              <div className="vote-item">
+              <div key={index} className="vote-item">
                 <div className="vote-item__number">{index + 1}</div>
                 <input
                   id={index}
