@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 
 // actions
-import { changeLanguage, connectToTwitchChat } from './store/actions';
+import { changeLanguage } from './store/actions';
 
 // Import Routes
 import {
@@ -22,24 +22,7 @@ import NonAuthLayout from './components/NonAuthLayout';
 // Import scss
 import './assets/scss/index.scss';
 
-function App({
-  lang: Lang,
-  changeLanguage: ChangeLanguage,
-  twitchChat: TwitchChat,
-  connectToTwitchChat: dispatchConnectToTwitchChat,
-}) {
-  useEffect(() => {
-    const tmpTwitchId = window.localStorage.getItem('twitchId');
-
-    if (tmpTwitchId) {
-      dispatchConnectToTwitchChat(tmpTwitchId);
-    }
-
-    return () => {
-      TwitchChat.disconnect();
-    };
-  }, [TwitchChat, dispatchConnectToTwitchChat]);
-
+function App({ lang: Lang, changeLanguage: ChangeLanguage }) {
   useEffect(() => {
     // 초기 언어 설정
     try {
@@ -116,17 +99,14 @@ function App({
 App.propTypes = {
   lang: PropTypes.string.isRequired,
   changeLanguage: PropTypes.func.isRequired,
-  twitchChat: PropTypes.shape({}).isRequired,
-  connectToTwitchChat: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     lang: state.Layout.lang,
-    twitchChat: state.Layout.twitchChat,
   };
 };
 
-const mapDispatchToProps = { changeLanguage, connectToTwitchChat };
+const mapDispatchToProps = { changeLanguage };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -1,5 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
+
+// actions
+import { startVote, endVote } from '../../store/actions';
 
 const Grid = styled.div`
   color: #393e46;
@@ -19,15 +24,34 @@ const Grid = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    border: none;
+    transition: all 200ms cubic-bezier(0.39, 0.5, 0.15, 1.36);
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &:focus {
+      outline: none;
+    }
   }
 
   .end-button {
     grid-area: end;
     color: black;
-    background-color: #eeeeee;
+    background-color: gray;
     display: flex;
     justify-content: center;
     align-items: center;
+    border: none;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &:focus {
+      outline: none;
+    }
   }
 
   .bottom {
@@ -79,7 +103,7 @@ function usePrevious(value) {
   return ref.current;
 }
 
-function VoteForm() {
+function VoteForm({ startVote: dispatchStartVote, endVote: dispatchEndVote }) {
   const [voteItems, setVoteItems] = useState(['']);
   const prevVoteItemsLength = usePrevious(voteItems.length);
   const inputRefs = useRef([]);
@@ -124,11 +148,27 @@ function VoteForm() {
     }
   }
 
+  function onClickStartVote() {
+    dispatchStartVote(true);
+  }
+
+  function onClickEndVote() {
+    dispatchEndVote(false);
+  }
+
   return (
     <>
       <Grid>
-        <div className="start-button">시작</div>
-        <div className="end-button">마감</div>
+        <button
+          type="button"
+          onClick={onClickStartVote}
+          className="start-button"
+        >
+          시작
+        </button>
+        <button onClick={onClickEndVote} type="button" className="end-button">
+          마감
+        </button>
         <div className="bottom">
           {voteItems.map((value, index) => {
             return (
@@ -155,4 +195,11 @@ function VoteForm() {
   );
 }
 
-export default VoteForm;
+VoteForm.propTypes = {
+  startVote: PropTypes.func.isRequired,
+  endVote: PropTypes.func.isRequired,
+};
+
+const mapDispatchToProps = { startVote, endVote };
+
+export default connect(null, mapDispatchToProps)(VoteForm);

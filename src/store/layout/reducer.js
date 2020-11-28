@@ -1,16 +1,16 @@
-import tmi from 'tmi.js';
-
-import { CHANGE_LANGUAGE, CONNECT_TO_TWITCH_CHAT } from './actionTypes';
+import {
+  CHANGE_LANGUAGE,
+  CHANGE_TWITCH_ID,
+  CONNECT_TO_TWITCH_CHAT,
+  START_VOTE,
+  END_VOTE,
+} from './actionTypes';
 
 const INIT_STATE = {
-  lang: 'en',
-  twitchChat: new tmi.Client({
-    connection: {
-      reconnect: true,
-      secure: true,
-    },
-  }),
-  twitchId: '',
+  lang: window.localStorage.getItem('lang'),
+  twitchChat: {},
+  twitchId: window.localStorage.getItem('twitchId'),
+  isVoting: window.localStorage.getItem('isVoting'),
 };
 
 const Layout = (state = INIT_STATE, action) => {
@@ -20,10 +20,25 @@ const Layout = (state = INIT_STATE, action) => {
         ...state,
         lang: action.payload,
       };
-    case CONNECT_TO_TWITCH_CHAT:
+    case CHANGE_TWITCH_ID:
       return {
         ...state,
         twitchId: action.payload,
+      };
+    case CONNECT_TO_TWITCH_CHAT:
+      return {
+        ...state,
+        twitchChat: action.payload,
+      };
+    case START_VOTE:
+      return {
+        ...state,
+        isVoting: true,
+      };
+    case END_VOTE:
+      return {
+        ...state,
+        isVoting: false,
       };
     default:
       return state;

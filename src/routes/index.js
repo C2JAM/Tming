@@ -11,7 +11,7 @@ import Vote from '../pages/Vote/index';
 import Login from '../pages/Login/index';
 
 // 슬롯
-import Slot from '../pages/Slot/index';
+import VoteOverlay from '../pages/Slot/voteOverlay';
 
 const authProtectedRoutes = [
   // 워드 클라우드
@@ -27,7 +27,7 @@ const authProtectedRoutes = [
 // 레이아웃이 필요없는 페이지들
 const noLayoutRoutes = [
   // slot
-  { path: '/slot', component: Slot },
+  { path: '/slot/vote', component: VoteOverlay },
 ];
 
 // 로그인이 필요없는 페이지들
