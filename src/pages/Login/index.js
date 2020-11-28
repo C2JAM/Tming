@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import styled, { keyframes } from 'styled-components';
 
 // actions
-import { changeLanguage, connectToTwitchChat } from '../../store/actions';
+import { changeLanguage, changeTwitchId } from '../../store/actions';
 
 // language
 import { LangProvider } from '../../components/Languages/languages';
@@ -209,7 +209,7 @@ const LanguageSelector = styled.div`
 function Index({
   lang: Lang,
   changeLanguage: ChangeLanguage,
-  connectToTwitchChat: dispatchConnectToTwitchChat,
+  changeTwitchId: ChangeTwitchId,
 }) {
   const [twitchId, setTwitchId] = useState('');
   const history = useHistory();
@@ -225,7 +225,7 @@ function Index({
   }
 
   function onClickStartButton() {
-    dispatchConnectToTwitchChat(twitchId);
+    ChangeTwitchId(twitchId);
     history.push('/vote');
   }
 
@@ -298,7 +298,7 @@ function Index({
 Index.propTypes = {
   lang: PropTypes.string.isRequired,
   changeLanguage: PropTypes.func.isRequired,
-  connectToTwitchChat: PropTypes.func.isRequired,
+  changeTwitchId: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -307,6 +307,6 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = { changeLanguage, connectToTwitchChat };
+const mapDispatchToProps = { changeLanguage, changeTwitchId };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Index);

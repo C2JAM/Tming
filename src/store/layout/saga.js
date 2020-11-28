@@ -1,7 +1,20 @@
 // @flow
 import { all, fork, takeEvery, select } from 'redux-saga/effects';
 
-import { CHANGE_LANGUAGE, CONNECT_TO_TWITCH_CHAT } from './actionTypes';
+import {
+  CHANGE_LANGUAGE,
+  CHANGE_TWITCH_ID,
+  CONNECT_TO_TWITCH_CHAT,
+  START_VOTE,
+  END_VOTE,
+} from './actionTypes';
+
+function vote(tags, message) {
+  const msgArr = message.split(' ');
+
+  console.log(msgArr);
+  if (msgArr[0] !== '!vote' && msgArr[0] !== '!투표') return;
+}
 
 /**
  * Changes the site language
@@ -11,27 +24,51 @@ function* changeLanguage({ payload: lang }) {
   yield window.localStorage.setItem('lang', lang);
 }
 
+function* changeTwitchID({ payload: twitchID }) {
+  yield window.localStorage.setItem('twitchId', twitchID);
+}
+
 /**
  * Connect to twitch chat server
  * @param {string} payload.twitchId
  */
-function* connectToTwitchServer({ payload: twitchId }) {
+function* connectToTwitchServer({ payload: twitchChat }) {
   const {
-    Layout: { twitchChat: client },
+    Layout: { twitchChat: prevTwitchChat },
   } = yield select();
 
-  yield client.connect().catch(err => console.warn(err));
+  try {
+    yield prevTwitchChat.disconnect();
+  } catch (err) {
+    console.error(err);
+  } finally {
+    const twitchId = window.localStorage.getItem('twitchId');
 
-  const channels = yield client.getChannels().map(value => value.substr(1));
+    yield twitchChat.connect().catch(err => console.warn(err));
+    yield twitchChat.join(twitchId);
 
-  yield channels.forEach(value => client.part(value));
-  yield client.join(twitchId).catch(err => console.warn(err));
-  window.localStorage.setItem('twitchId', twitchId);
+    yield twitchChat.on('message', (channel, tags, message, self) => {
+      if (self) return;
+      // Vote
+      if (window.localStorage.getItem('isVoting') === 'true') {
+        vote(tags, message);
+      }
+    });
+  }
+}
 
-  yield client.on('message', (channel, tags, message, self) => {
-    if (self) return;
-    console.warn(message);
-  });
+/**
+ * Start vote
+ */
+function* startVote() {
+  yield window.localStorage.setItem('isVoting', true);
+}
+
+/**
+ * End vote
+ */
+function* endVote() {
+  yield window.localStorage.setItem('isVoting', false);
 }
 
 /**
@@ -41,12 +78,30 @@ export function* watchChangeLanguage() {
   yield takeEvery(CHANGE_LANGUAGE, changeLanguage);
 }
 
+export function* watchChangeTwitchID() {
+  yield takeEvery(CHANGE_TWITCH_ID, changeTwitchID);
+}
+
 export function* watchConnectToTwitchServer() {
   yield takeEvery(CONNECT_TO_TWITCH_CHAT, connectToTwitchServer);
 }
 
+export function* watchStartVote() {
+  yield takeEvery(START_VOTE, startVote);
+}
+
+export function* watchEndVote() {
+  yield takeEvery(END_VOTE, endVote);
+}
+
 function* LayoutSaga() {
-  yield all([fork(watchChangeLanguage), fork(watchConnectToTwitchServer)]);
+  yield all([
+    fork(watchChangeLanguage),
+    fork(watchChangeTwitchID),
+    fork(watchConnectToTwitchServer),
+    fork(watchStartVote),
+    fork(watchEndVote),
+  ]);
 }
 
 export default LayoutSaga;
