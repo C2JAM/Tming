@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { Line } from 'rc-progress';
 
 // actions
 import { startVote, endVote } from '../../store/actions';
@@ -20,15 +21,17 @@ const Grid = styled.div`
   .start-button {
     grid-area: start;
     color: black;
-    background-color: #ffd369;
+    background-color: ${props =>
+      props.IsVoting === 'true' ? 'gray' : '#ffd369'};
     display: flex;
     justify-content: center;
     align-items: center;
     border: none;
-    transition: all 200ms cubic-bezier(0.39, 0.5, 0.15, 1.36);
+    transition: all 100ms cubic-bezier(0.39, 0.5, 0.15, 1.36);
 
     &:hover {
-      cursor: pointer;
+      cursor: ${props =>
+        props.IsVoting === 'true' ? 'not-allowed' : 'pointer'};
     }
 
     &:focus {
@@ -39,14 +42,17 @@ const Grid = styled.div`
   .end-button {
     grid-area: end;
     color: black;
-    background-color: gray;
+    background-color: ${props =>
+      props.IsVoting === 'true' ? '#ffd369' : 'gray'};
     display: flex;
     justify-content: center;
     align-items: center;
     border: none;
+    transition: all 100ms cubic-bezier(0.39, 0.5, 0.15, 1.36);
 
     &:hover {
-      cursor: pointer;
+      cursor: ${props =>
+        props.IsVoting === 'true' ? 'pointer' : 'not-allowed'};
     }
 
     &:focus {
@@ -62,15 +68,28 @@ const Grid = styled.div`
   }
 
   .vote-item {
+    display: flex;
+    align-items: center;
     padding: 5px 15px;
     height: 50px;
-    align-items: center;
-    display: flex;
     background-color: #eeeeee;
     gap: 15px;
 
     &:focus-within {
       background-color: #ffd369;
+    }
+
+    .vote-item__status {
+      .vote-item__name {
+        font-size: 20px;
+      }
+
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 10px;
+      width: 100%;
+      height: 100%;
     }
 
     .vote-item__number {
@@ -82,11 +101,13 @@ const Grid = styled.div`
     }
 
     input {
+      display: flex;
       height: 100%;
       width: 100%;
       background-color: transparent;
       border: none;
       font-size: 20px;
+      align-items: center;
 
       &:focus {
         outline: none;
@@ -103,10 +124,35 @@ function usePrevious(value) {
   return ref.current;
 }
 
-function VoteForm({ startVote: dispatchStartVote, endVote: dispatchEndVote }) {
-  const [voteItems, setVoteItems] = useState(['']);
+function VoteForm({
+  startVote: dispatchStartVote,
+  endVote: dispatchEndVote,
+  isVoting: IsVoting,
+}) {
+  const [voteItems, setVoteItems] = useState(
+    JSON.parse(window.localStorage.getItem('labels')),
+  );
+
+  const [series, setSeries] = useState(
+    JSON.parse(window.localStorage.getItem('series')),
+  );
+
   const prevVoteItemsLength = usePrevious(voteItems.length);
   const inputRefs = useRef([]);
+
+  useEffect(() => {
+    const IntervalID = setInterval(() => {
+      const newSeries = window.localStorage.getItem('series');
+
+      if (newSeries) {
+        setSeries(JSON.parse(newSeries));
+      }
+    }, 500);
+
+    return () => {
+      clearInterval(IntervalID);
+    };
+  }, []);
 
   useEffect(() => {
     // 투표 항목이 증가했다면
@@ -115,6 +161,15 @@ function VoteForm({ startVote: dispatchStartVote, endVote: dispatchEndVote }) {
       inputRefs.current[lastIndex].select();
     }
   }, [voteItems.length, prevVoteItemsLength]);
+
+  function getPercent(idx) {
+    const sum = series.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+    );
+
+    if (sum === 0) return 0;
+    return ((series[idx] * 100) / sum).toFixed(1);
+  }
 
   function onChangeVoteItem(event) {
     const { id, value: newValue } = event.target;
@@ -149,16 +204,22 @@ function VoteForm({ startVote: dispatchStartVote, endVote: dispatchEndVote }) {
   }
 
   function onClickStartVote() {
-    dispatchStartVote(true);
+    dispatchStartVote('true');
+    window.localStorage.setItem('labels', JSON.stringify(voteItems));
+    window.localStorage.setItem(
+      'series',
+      JSON.stringify(voteItems.map(() => 0)),
+    );
+    window.localStorage.setItem('votedUsers', JSON.stringify([]));
   }
 
   function onClickEndVote() {
-    dispatchEndVote(false);
+    dispatchEndVote('false');
   }
 
   return (
     <>
-      <Grid>
+      <Grid IsVoting={IsVoting}>
         <button
           type="button"
           onClick={onClickStartVote}
@@ -170,25 +231,46 @@ function VoteForm({ startVote: dispatchStartVote, endVote: dispatchEndVote }) {
           마감
         </button>
         <div className="bottom">
-          {voteItems.map((value, index) => {
-            return (
-              <div key={index} className="vote-item">
-                <div className="vote-item__number">{index + 1}</div>
-                <input
-                  id={index}
-                  value={voteItems[index]}
-                  onChange={onChangeVoteItem}
-                  onKeyUp={onEnterPress}
-                  placeholder="새 항목 입력"
-                  ref={el => {
-                    inputRefs.current[index] = el;
-                  }}
-                  spellCheck={false}
-                  autoComplete="off"
-                />
-              </div>
-            );
-          })}
+          {IsVoting === 'true'
+            ? voteItems.map((value, index) => {
+                return (
+                  <>
+                    <div className="vote-item">
+                      <div className="vote-item__number">{index + 1}</div>
+                      <div className="vote-item__status">
+                        <div className="vote-item__name">
+                          {voteItems[index]}
+                        </div>
+                        <Line
+                          percent={getPercent(index)}
+                          strokeWidth="1.8"
+                          strokeColor="#ffd369"
+                          trailColor="#393e46"
+                        />
+                      </div>
+                    </div>
+                  </>
+                );
+              })
+            : voteItems.map((value, index) => {
+                return (
+                  <div className="vote-item">
+                    <div className="vote-item__number">{index + 1}</div>
+                    <input
+                      id={index}
+                      value={voteItems[index]}
+                      onChange={onChangeVoteItem}
+                      onKeyUp={onEnterPress}
+                      placeholder="새 항목 입력"
+                      ref={el => {
+                        inputRefs.current[index] = el;
+                      }}
+                      spellCheck={false}
+                      autoComplete="off"
+                    />
+                  </div>
+                );
+              })}
         </div>
       </Grid>
     </>
@@ -198,8 +280,15 @@ function VoteForm({ startVote: dispatchStartVote, endVote: dispatchEndVote }) {
 VoteForm.propTypes = {
   startVote: PropTypes.func.isRequired,
   endVote: PropTypes.func.isRequired,
+  isVoting: PropTypes.string.isRequired,
+};
+
+const mapStateToProps = state => {
+  return {
+    isVoting: state.Layout.isVoting,
+  };
 };
 
 const mapDispatchToProps = { startVote, endVote };
 
-export default connect(null, mapDispatchToProps)(VoteForm);
+export default connect(mapStateToProps, mapDispatchToProps)(VoteForm);

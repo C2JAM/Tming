@@ -1,20 +1,12 @@
 // @flow
-import { all, fork, takeEvery, select } from 'redux-saga/effects';
+import { all, fork, takeEvery } from 'redux-saga/effects';
 
 import {
   CHANGE_LANGUAGE,
   CHANGE_TWITCH_ID,
-  CONNECT_TO_TWITCH_CHAT,
   START_VOTE,
   END_VOTE,
 } from './actionTypes';
-
-function vote(tags, message) {
-  const msgArr = message.split(' ');
-
-  console.log(msgArr);
-  if (msgArr[0] !== '!vote' && msgArr[0] !== '!투표') return;
-}
 
 /**
  * Changes the site language
@@ -26,35 +18,6 @@ function* changeLanguage({ payload: lang }) {
 
 function* changeTwitchID({ payload: twitchID }) {
   yield window.localStorage.setItem('twitchId', twitchID);
-}
-
-/**
- * Connect to twitch chat server
- * @param {string} payload.twitchId
- */
-function* connectToTwitchServer({ payload: twitchChat }) {
-  const {
-    Layout: { twitchChat: prevTwitchChat },
-  } = yield select();
-
-  try {
-    yield prevTwitchChat.disconnect();
-  } catch (err) {
-    console.error(err);
-  } finally {
-    const twitchId = window.localStorage.getItem('twitchId');
-
-    yield twitchChat.connect().catch(err => console.warn(err));
-    yield twitchChat.join(twitchId);
-
-    yield twitchChat.on('message', (channel, tags, message, self) => {
-      if (self) return;
-      // Vote
-      if (window.localStorage.getItem('isVoting') === 'true') {
-        vote(tags, message);
-      }
-    });
-  }
 }
 
 /**
@@ -82,10 +45,6 @@ export function* watchChangeTwitchID() {
   yield takeEvery(CHANGE_TWITCH_ID, changeTwitchID);
 }
 
-export function* watchConnectToTwitchServer() {
-  yield takeEvery(CONNECT_TO_TWITCH_CHAT, connectToTwitchServer);
-}
-
 export function* watchStartVote() {
   yield takeEvery(START_VOTE, startVote);
 }
@@ -98,7 +57,6 @@ function* LayoutSaga() {
   yield all([
     fork(watchChangeLanguage),
     fork(watchChangeTwitchID),
-    fork(watchConnectToTwitchServer),
     fork(watchStartVote),
     fork(watchEndVote),
   ]);
