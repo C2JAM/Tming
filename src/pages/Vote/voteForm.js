@@ -137,7 +137,7 @@ function usePrevious(value) {
 }
 
 function VoteForm() {
-  const [address, setAddress] = useState('http://127.0.0.1:3000/slot/vote');
+  const [address, setAddress] = useState('https://tming.live/slot/vote');
   const [voteItems, setVoteItems] = useState(['']);
   const [series, setSeries] = useState([0]);
 
@@ -197,7 +197,7 @@ function VoteForm() {
     window.localStorage.setItem('labels', JSON.stringify(newVoteItems));
     setVoteItems(newVoteItems);
     setAddress(
-      `https://127.0.0.1:3000/slot/vote/${window.btoa(
+      `https://tming.live/slot/vote/${window.btoa(
         encodeURIComponent(JSON.stringify(newVoteItems)),
       )}`,
     );
