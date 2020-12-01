@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { LangProvider } from '../../components/Languages/languages';
+
 const Wrapper = styled.div`
   box-sizing: border-box;
   height: 100%;
@@ -35,9 +37,7 @@ const VotedUser = styled.div`
 `;
 
 function VotedUsers() {
-  const [votedUsers, setvotedUsers] = useState(
-    JSON.parse(window.localStorage.getItem('votedUsers')),
-  );
+  const [votedUsers, setvotedUsers] = useState([]);
 
   useEffect(() => {
     function onChangeVotedUsers() {
@@ -56,16 +56,16 @@ function VotedUsers() {
   }, []);
 
   return (
-    <>
-      <Wrapper>
-        <div className="top">투표 참여자 : {votedUsers.length}</div>
-        <div>
-          {votedUsers.map(value => {
-            return <VotedUser>{value.userName}</VotedUser>;
-          })}
-        </div>
-      </Wrapper>
-    </>
+    <Wrapper>
+      <div className="top">
+        <LangProvider LangKey="vote_part" /> : {votedUsers?.length}
+      </div>
+      <div>
+        {votedUsers?.map(value => {
+          return <VotedUser>{value.userName}</VotedUser>;
+        })}
+      </div>
+    </Wrapper>
   );
 }
 

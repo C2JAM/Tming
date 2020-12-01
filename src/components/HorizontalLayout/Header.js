@@ -110,11 +110,11 @@ function Index({ lang: Lang, changeLanguage: changeLanguageDispatch }) {
               <LangProvider LangKey="real_time_voting" />
             </Button>
           </Link>
-          <Link to="/wordcloud">
+          {/* <Link to="/wordcloud">
             <Button type="button">
               <LangProvider LangKey="wordcloud" />
             </Button>
-          </Link>
+          </Link> */}
         </FlexItems>
 
         <div className="header-item">

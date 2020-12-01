@@ -4,8 +4,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Line } from 'rc-progress';
 
-// actions
-import { startVote, endVote } from '../../store/actions';
+import { LangProvider, convert } from '../../components/Languages/languages';
 
 const Grid = styled.div`
   color: #393e46;
@@ -13,50 +12,53 @@ const Grid = styled.div`
   padding: 20px;
   display: grid;
   grid-template:
-    'start end' 60px
+    'copy copy' 60px
     'bottom bottom' 1fr
     /1fr 1fr;
   grid-gap: 10px;
 
-  .start-button {
-    grid-area: start;
+  .slot {
+    grid-area: copy;
     color: black;
-    background-color: ${props =>
-      props.IsVoting === 'true' ? 'gray' : '#ffd369'};
+    background-color: #eeeeee;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    border: none;
-    transition: all 100ms cubic-bezier(0.39, 0.5, 0.15, 1.36);
+    border-radius: 0.2rem;
 
-    &:hover {
-      cursor: ${props =>
-        props.IsVoting === 'true' ? 'not-allowed' : 'pointer'};
+    .slot__address {
+      textarea {
+        display: flex;
+        resize: none;
+        align-items: center;
+        padding: 10px;
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-size: 16px;
+        &:focus {
+          outline: none;
+        }
+      }
     }
 
-    &:focus {
-      outline: none;
-    }
-  }
+    .slot__copy {
+      width: 140px;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #ffd369;
+      border: none;
 
-  .end-button {
-    grid-area: end;
-    color: black;
-    background-color: ${props =>
-      props.IsVoting === 'true' ? '#ffd369' : 'gray'};
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: none;
-    transition: all 100ms cubic-bezier(0.39, 0.5, 0.15, 1.36);
+      &:hover {
+        cursor: pointer;
+      }
 
-    &:hover {
-      cursor: ${props =>
-        props.IsVoting === 'true' ? 'pointer' : 'not-allowed'};
-    }
-
-    &:focus {
-      outline: none;
+      &:focus {
+        outline: none;
+      }
     }
   }
 
@@ -113,6 +115,16 @@ const Grid = styled.div`
         outline: none;
       }
     }
+
+    i {
+      font-size: 20px;
+      color: #ab0e23;
+
+      &:hover {
+        opacity: 0.8;
+        cursor: pointer;
+      }
+    }
   }
 `;
 
@@ -124,18 +136,12 @@ function usePrevious(value) {
   return ref.current;
 }
 
-function VoteForm({
-  startVote: dispatchStartVote,
-  endVote: dispatchEndVote,
-  isVoting: IsVoting,
-}) {
-  const [voteItems, setVoteItems] = useState(
-    JSON.parse(window.localStorage.getItem('labels')),
-  );
+function VoteForm() {
+  const [address, setAddress] = useState('http://127.0.0.1:3000/slot/vote');
+  const [voteItems, setVoteItems] = useState(['']);
+  const [series, setSeries] = useState([0]);
 
-  const [series, setSeries] = useState(
-    JSON.parse(window.localStorage.getItem('series')),
-  );
+  const [isVoting, setIsVoting] = useState(false);
 
   const prevVoteItemsLength = usePrevious(voteItems.length);
   const inputRefs = useRef([]);
@@ -143,9 +149,16 @@ function VoteForm({
   useEffect(() => {
     const IntervalID = setInterval(() => {
       const newSeries = window.localStorage.getItem('series');
+      const newIsVoting = window.localStorage.getItem('isVoting');
 
       if (newSeries) {
         setSeries(JSON.parse(newSeries));
+      }
+
+      if (newIsVoting === 'true') {
+        setIsVoting(true);
+      } else if (newIsVoting === 'false') {
+        setIsVoting(false);
       }
     }, 500);
 
@@ -163,11 +176,11 @@ function VoteForm({
   }, [voteItems.length, prevVoteItemsLength]);
 
   function getPercent(idx) {
-    const sum = series.reduce(
+    const sum = series?.reduce(
       (accumulator, currentValue) => accumulator + currentValue,
     );
 
-    if (sum === 0) return 0;
+    if (series === null || sum === 0) return 0;
     return ((series[idx] * 100) / sum).toFixed(1);
   }
 
@@ -180,7 +193,14 @@ function VoteForm({
       }
       return value;
     });
+
+    window.localStorage.setItem('labels', JSON.stringify(newVoteItems));
     setVoteItems(newVoteItems);
+    setAddress(
+      `https://127.0.0.1:3000/slot/vote/${window.btoa(
+        encodeURIComponent(JSON.stringify(newVoteItems)),
+      )}`,
+    );
   }
 
   function onEnterPress(event) {
@@ -203,35 +223,40 @@ function VoteForm({
     }
   }
 
-  function onClickStartVote() {
-    dispatchStartVote('true');
-    window.localStorage.setItem('labels', JSON.stringify(voteItems));
-    window.localStorage.setItem(
-      'series',
-      JSON.stringify(voteItems.map(() => 0)),
-    );
-    window.localStorage.setItem('votedUsers', JSON.stringify([]));
+  function onDeleteVoteItem(event) {
+    const deleteIndex = event.target.parentNode.children[1].id;
+    const count = event.target.parentNode.parentNode.children.length;
+    if (count > 1) {
+      const newVoteItems = voteItems.filter(
+        (value, index) => index !== parseInt(deleteIndex, 10),
+      );
+
+      setVoteItems(newVoteItems);
+    }
   }
 
-  function onClickEndVote() {
-    dispatchEndVote('false');
+  function onClickCopy(event) {
+    const text = event.target.parentNode.children[0].children[0];
+
+    text.select();
+    document.execCommand('copy');
+
+    text.setSelectionRange(0, 0);
   }
 
   return (
     <>
-      <Grid IsVoting={IsVoting}>
-        <button
-          type="button"
-          onClick={onClickStartVote}
-          className="start-button"
-        >
-          시작
-        </button>
-        <button onClick={onClickEndVote} type="button" className="end-button">
-          마감
-        </button>
+      <Grid IsVoting={isVoting}>
+        <div className="slot">
+          <div className="slot__address">
+            <textarea spellCheck="false" value={address} />
+          </div>
+          <button type="button" onClick={onClickCopy} className="slot__copy">
+            <LangProvider LangKey="copy_slot" />
+          </button>
+        </div>
         <div className="bottom">
-          {IsVoting === 'true'
+          {isVoting
             ? voteItems.map((value, index) => {
                 return (
                   <>
@@ -261,13 +286,14 @@ function VoteForm({
                       value={voteItems[index]}
                       onChange={onChangeVoteItem}
                       onKeyUp={onEnterPress}
-                      placeholder="새 항목 입력"
+                      placeholder={convert()['new_item']}
                       ref={el => {
                         inputRefs.current[index] = el;
                       }}
                       spellCheck={false}
                       autoComplete="off"
                     />
+                    <i className="fas fa-times" onClick={onDeleteVoteItem} />
                   </div>
                 );
               })}
@@ -277,18 +303,6 @@ function VoteForm({
   );
 }
 
-VoteForm.propTypes = {
-  startVote: PropTypes.func.isRequired,
-  endVote: PropTypes.func.isRequired,
-  isVoting: PropTypes.string.isRequired,
-};
+VoteForm.propTypes = {};
 
-const mapStateToProps = state => {
-  return {
-    isVoting: state.Layout.isVoting,
-  };
-};
-
-const mapDispatchToProps = { startVote, endVote };
-
-export default connect(mapStateToProps, mapDispatchToProps)(VoteForm);
+export default connect(null, null)(VoteForm);
