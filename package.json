@@ -6,7 +6,7 @@
   "scripts": {
     "start": "react-scripts start",
     "deploy": "npm run react_build && npm run server_deploy",
-    "react_build": "npm install && react-scripts --max_old_space_size=8000 build && rm -rf server/react && mv -f build server/react",
+    "react_build": "npm install && react-scripts --max_old_space_size=8000 build",
     "server_deploy": "cd server && npm run deploy"
   },
   "keywords": [
