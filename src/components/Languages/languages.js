@@ -9,32 +9,6 @@ const Language = {
 };
 
 const sentences = {
-  // 원하는 문자열 여기에 저장하면 됩니다.
-  // 메인 타이틀
-  main_upper_title: [
-    'Make your broadcast more fun',
-    '당신의 방송을 더욱 재밌게',
-  ],
-
-  // 로그아웃 메세지
-  logout_alert: [
-    'After logging out from the Twitch homepage, close the app and run it again!',
-    '트위치 홈페이지에서 로그아웃을 한 후 어플을 종료하고 다시 실행시켜 주세요!',
-  ],
-
-  // 새로고침 메세지
-  if_dont_work: [
-    "If the function doesn't work, click Refresh Button! (refresh button on the top right)  ",
-    '만약 기능이 작동하지 않을땐 새로고침을 눌러보세요!(우측 상단 새로고침 버튼)  ',
-  ],
-
-  // 투표 안내 메세지
-
-  info_about_voting: [
-    'When the vote begins, the viewer can enter "!vote [item]", "!vote [item name]" to participate in the vote. ex) "!vote 1," "!vote chicken"',
-    '투표가 시작되면 시청자는 "!투표 [항목숫자]", "!투표 [항목이름]"을 입력하여 투표에 참여 할 수 있습니다. ex) "!투표 1", "!투표 치킨"',
-  ],
-
   // Home 화면
   real_time_voting: ['Real time voting', '실시간 투표'],
   my_top_clips: ['My Top Clips', '내 인기 클립'],
@@ -76,12 +50,12 @@ const sentences = {
     '방송을 편하게, 시청자는 즐겁게',
   ],
   login_description_1: [
-    'Easily set up a variety of viewer engagement content such as viewer engagement surveys and chat analysis.',
-    '시청자 참여 설문, 채팅 분석 등 다양한 시청자 참여 컨텐츠를 손쉽게 설정해보세요.',
+    'Easily set up a variety of viewer engagement content such as viewer engagement surveys.',
+    '시청자 참여 설문으로 다양한 시청자의 참여를 유도해보세요.',
   ],
   login_description_2: [
     'With Tming, you can create a richer broadcast.',
-    'Tming과 함께라면 더욱 풍성한 방송을 만들 수 있습니다.',
+    '트밍과 함께라면 더욱 풍성한 방송을 만들 수 있습니다.',
   ],
   login_description_3: ['What is Tming?', '트밍이란?'],
   login_twitch: ['Log in with Twitch', '트위치로 로그인'],
@@ -105,29 +79,10 @@ const sentences = {
   wordcloudform_apply_option: ['Apply option', '옵션 적용'],
   wordcloudform_apply_slot: ['Apply to broadcast screen', '방송화면에 적용'],
 
-  // VoteForm 화면
-  start_voting: ['Start voting', '투표 시작'],
-  end_voting: ['End voting', '투표 종료'],
-  vote_apply_slot: ['Apply to broadcast screen', '방송화면에 적용'],
-  voteform_placeholder: [
-    'Please enter your voting item',
-    '투표 항목을 입력후 엔터를 누르세요!',
-  ],
-  vote_end_alert: ['Voting end', '투표 종료'],
-  vote_apply_to_slot_alert: [
-    'Successfully applied to broadcast screen',
-    '방송화면에 적용 되었습니다',
-  ],
-  vote_already_exist_alert: [
-    'Voting is already exist. Please end voting',
-    '투표가 이미 진행중입니다. 진행중인 투표를 종료해주세요',
-  ],
-  voted_user_1: ['voted at', '님이'],
-  voted_user_2: ['', '번에 투표하셨습니다.'],
-  vote_has_empty: [
-    'Blank spaces cannot be voting items.',
-    '빈 칸은 투표 항목이 될 수 없습니다.',
-  ],
+  // Vote 화면
+  copy_slot: ['Copy slot', '슬롯 복사'],
+  vote_part: ['Voting participants', '투표 참여자'],
+  new_item: ['Add new item', '새 항목 추가'],
 
   // Guide 화면
   home_guide_1_1: ['Hello', '안녕하세요.'],
@@ -168,76 +123,6 @@ const sentences = {
     'Please register the address "http://127.0.0.1:5000/slot" as an overlay to OBS or XSplit.',
     '"http://127.0.0.1:5000/slot"의 주소를 OBS나 XSplit에 오버레이로 등록해주세요.',
   ],
-
-  // 설명서 화면
-  manual_item_1: ['How to Use Voting', '투표 이용하기'],
-  manual_item_2: ['How to Use WordCloud', '워드클라우드 이용하기'],
-  manual_vote_1_1: [
-    '1. Press the button to start voting (but not if voting is already in progress).',
-    '1. 해당 버튼을 누르면 투표가 시작됩니다.(단, 이미 투표가 진행중인 경우에는 투표를 시작할 수 없습니다)',
-  ],
-  manual_vote_1_2: [
-    '2. You can set the vote you want.',
-    '2. 원하는 투표 항목을 설정 할 수 있습니다.',
-  ],
-  manual_vote_1_3: [
-    '3. You can set the language you want.',
-    '3. 원하는 언어를 설정할 수 있습니다.',
-  ],
-  manual_vote_1_4: [
-    '4. You can view your own Twitch chat room.',
-    '4. 자신의 트위치 채팅방을 볼 수 있습니다.',
-  ],
-  manual_vote_2_1: [
-    '1. You can check when and where the people who voted voted.',
-    '1. 투표 한 사람들이 언제, 어디에 투표했는지 확인 할 수 있습니다.',
-  ],
-  manual_vote_2_2: [
-    '2. Overlay Select the shape of the vote you want to float.',
-    '2. 오버레이 띄우기 원하는 투표의 모양을 선택 할 수 있습니다.',
-  ],
-  manual_vote_2_3: [
-    '3. You can hide your current vote.',
-    '3. 현재 투표를 감출 수 있습니다.',
-  ],
-  manual_vote_2_4: [
-    '4. Show everyone who has voted in window 1.',
-    '4. 현재 투표한 모든 사람들을 1번 창에 보여줍니다.',
-  ],
-  manual_vote_2_5: [
-    '5. Show voting items. Click on each item to see who voted for that item.',
-    '5. 투표 항목들을 보여줍니다. 각 항목들을 클릭하면 해당 항목에 투표한 사람들을 확인 할 수 있습니다.',
-  ],
-  manual_vote_2_6: [
-    '6. End the voting. Press the Apply Slot button to apply the current vote to the slot.',
-    '6. 투표를 종료합니다. 슬롯 적용 버튼을 누르면 현재 투표가 슬롯에 적용됩니다.',
-  ],
-  manual_vote_2_7: [
-    '7. You can view your own Twitch chat room.',
-    '7. 자신의 트위치 채팅방을 볼 수 있습니다.',
-  ],
-  manual_wordcloud_1_title: ['WordCloud setting', '워드클라우드 설정'],
-  manual_wordcloud_1_1: [
-    '1. You can resize the letters in WordCloud. You can specify the units in which the chat is saved and managed.',
-    '1. 워드클라우드의 글자 크기를 조정할 수 있습니다. 채팅이 저장되고 관리되는 단위를 지정 할 수 있습니다.',
-  ],
-  manual_wordcloud_1_2: [
-    '2. You can apply the settings you want. Apply the word cloud to the slot.',
-    '2. 원하는 설정을 적용 할 수 있습니다. 워드클라우드를 슬롯에 적용시킵니다.',
-  ],
-  manual_wordcloud_1_3: [
-    '3. You can check your twitch chat room.',
-    '3. 자신의 트위치 채팅방을 확인 할 수 있습니다.',
-  ],
-
-  // Tooltips
-  bar_tooltip: ['Bar chart', '막대형 차트'],
-  pie_tooltip: ['Pie chart', '파이형 차트'],
-  hide_tooltip: ['Hide voting', '투표 숨기기'],
-  show_tooltip: ['Show voting', '투표 보기'],
-  see_all_tooltip: ['View all voted users', '투표한 모든 유저 보기'],
-  getLastVote: ['View last voting history', '지난 투표 보기'],
-  backgroundColor: ['Make background color darker', '배경색 어둡게 만들기'],
 };
 
 export function convert() {

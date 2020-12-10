@@ -1,17 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import tmi from 'tmi.js';
 import Chart from 'react-apexcharts';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
-function VoteOverlay() {
+// actions
+import { startVote, endVote } from '../../store/actions';
+
+function VoteOverlay({
+  startVote: dispatchStartVote,
+  endVote: dispatchEndVote,
+}) {
   const [series, setSeries] = useState(
-    JSON.parse(window.localStorage.getItem('series')),
+    JSON.parse(window.localStorage.getItem('labels')).map(() => 0),
   );
+
   const [labels] = useState(JSON.parse(window.localStorage.getItem('labels')));
 
   // {userName: {string}, votedIndex: {number}}
-  const [votedUsers, setVotedUsers] = useState(
-    JSON.parse(window.localStorage.getItem('votedUsers')),
-  );
+  const [votedUsers, setVotedUsers] = useState([]);
 
   useEffect(() => {
     function vote(tags, message) {
@@ -66,22 +73,6 @@ function VoteOverlay() {
       });
     }
 
-    function onChangeStorage(event) {
-      if (event.key === 'isVoting' && event.newValue === 'true') {
-        const newSeries = JSON.parse(window.localStorage.getItem('labels'));
-
-        setSeries(
-          newSeries.map(() => {
-            return 0;
-          }),
-        );
-        window.localStorage.setItem(
-          'series',
-          JSON.stringify(newSeries.map(() => 0)),
-        );
-      }
-    }
-
     const newTwitchChat = new tmi.Client({
       connection: {
         reconnect: true,
@@ -90,11 +81,20 @@ function VoteOverlay() {
     });
 
     connectToTwitchChat(newTwitchChat);
-    window.addEventListener('storage', onChangeStorage);
+    dispatchStartVote('true');
+
+    window.addEventListener('beforeunload', () => {
+      dispatchEndVote('false');
+    });
 
     return () => {
       newTwitchChat.disconnect();
-      window.removeEventListener('storage', onChangeStorage);
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      dispatchEndVote('false');
     };
   }, []);
 
@@ -125,4 +125,11 @@ function VoteOverlay() {
   );
 }
 
-export default VoteOverlay;
+VoteOverlay.propTypes = {
+  startVote: PropTypes.func.isRequired,
+  endVote: PropTypes.func.isRequired,
+};
+
+const mapDispatchToProps = { startVote, endVote };
+
+export default connect(null, mapDispatchToProps)(VoteOverlay);

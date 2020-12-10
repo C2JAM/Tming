@@ -72,6 +72,7 @@ const BrowserWrapper = styled.div`
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  background-color: #222831;
 `;
 
 const LoginWrapper = styled.div`
@@ -89,16 +90,39 @@ const LoginBox = styled.div`
 
 const TextMain = styled.div`
   font-size: 24px;
+  line-height: 30px;
 
   .login-box__strong {
     font-size: 28px;
-    font-weight: 500;
+    line-height: 50px;
+    font-weight: 600;
   }
 `;
 
 const TextSub = styled.div`
   display: flex;
   align-items: center;
+
+  input {
+    height: 30px;
+    border: none;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  button {
+    height: 30px;
+    width: 60px;
+    border: none;
+    border-radius: 0.2rem;
+
+    &:hover {
+      background-color: #ffd369;
+      cursor: pointer;
+    }
+  }
 `;
 
 const Separator = styled.div`
@@ -280,6 +304,7 @@ function Index({
             <TextSub>
               <input
                 value={twitchId}
+                spellCheck={false}
                 onChange={onChangeTwitchId}
                 placeholder="트위치 아이디 입력"
               />
